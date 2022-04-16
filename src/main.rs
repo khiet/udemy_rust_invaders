@@ -1,10 +1,12 @@
 use std::{
     error::Error,
+    time::{Duration},
     {io},
 };
 
 use crossterm::{
     cursor::{Hide, Show},
+    event::{self, Event, KeyCode},
     terminal::{self, EnterAlternateScreen, LeaveAlternateScreen},
     ExecutableCommand,
 };
@@ -29,6 +31,20 @@ fn main() -> Result <(), Box<dyn Error>> {
     stdout.execute(Hide)?; // hide the cursor
 
     // Game Loop
+    'gameloop: loop {
+        while event::poll(Duration::default())? {
+            if let Event::Key(key_event) = event::read()? {
+                match key_event.code {
+                    KeyCode::Esc | KeyCode::Char('q') => {
+                        audio.play("lose");
+                        break 'gameloop;
+                    }
+                    _ => {}
+                }
+            }
+        }
+    }
+
 
     // Cleanup
     audio.wait();
