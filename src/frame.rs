@@ -14,6 +14,6 @@ pub fn new_frame() -> Frame {
     cols
 }
 
-pub trait Drawaable {
+pub trait Drawable {
     fn draw(&self, frame: &mut Frame);
 }

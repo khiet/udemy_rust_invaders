@@ -16,8 +16,9 @@ use crossterm::{
 use rusty_audio::Audio;
 
 use udemy_rust_invaders::{
-    frame,
+    frame::{self, Drawable},
     render,
+    player::Player,
 };
 
 fn main() -> Result <(), Box<dyn Error>> {
@@ -55,14 +56,17 @@ fn main() -> Result <(), Box<dyn Error>> {
     });
 
     // Game Loop
+    let mut player = Player::new();
     'gameloop: loop {
         // Setup an initial frame
-        let curr_frame = frame::new_frame();
+        let mut curr_frame = frame::new_frame();
 
         // Poll for an input
         while event::poll(Duration::default())? {
             if let Event::Key(key_event) = event::read()? {
                 match key_event.code {
+                    KeyCode::Left => player.move_left(),
+                    KeyCode::Right => player.move_right(),
                     KeyCode::Esc | KeyCode::Char('q') => {
                         audio.play("lose");
                         break 'gameloop;
@@ -72,6 +76,7 @@ fn main() -> Result <(), Box<dyn Error>> {
             }
         }
 
+        player.draw(&mut curr_frame);
         // Send current frame to Render Loop to draw the frame
         let _ = render_tx.send(curr_frame);
         // Force Game Loop to be slower than Render Loop
