@@ -123,7 +123,7 @@ fn main() -> Result<(), Box<dyn Error>> {
     render_handle.join().unwrap();
     audio.wait();
     // Reverse the Terminal initialization
-    stdout.execute(Show);
+    stdout.execute(Show)?;
     stdout.execute(LeaveAlternateScreen)?;
     terminal::disable_raw_mode()?;
     Ok(())
